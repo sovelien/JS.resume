@@ -179,27 +179,52 @@ document.addEventListener('dragstart',   function (e) { e.preventDefault(); });
    DevTools Detection — funny terminal overlay
    Strategy:
      A) setInterval (every 500 ms) — detects docked DevTools by
-        comparing window.outerWidth/Height to innerWidth/Height.
-        A difference > 160 px means a panel is docked.
-        It also auto-dismisses the overlay when DevTools closes.
+        comparing the DELTA of outerWidth/Height vs innerWidth/Height
+        against a baseline captured on page load. Using a delta (not
+        an absolute value) accounts for Firefox/Safari having larger
+        browser toolbars than Chrome, preventing cross-browser false
+        positives. A delta > 160 px signals a DevTools panel opened.
+        Also auto-dismisses the overlay when DevTools closes.
      B) console probe — a regex whose .toString is overridden;
         Chrome DevTools calls it when rendering the logged object,
-        betraying that the console panel is open.
+        betraying that the console panel is open. Chrome-only but
+        complements Strategy A for the undocked-window case.
 
-   Both paths check loaderDone first so the overlay never
-   appears while the page loader is still on screen.
+   Guards:
+     • loaderDone — overlay never appears while the loader is up.
+     • Mobile early-return — outerHeight vs innerHeight is always
+       large on mobile (address bar, status bar) causing false
+       positives; DevTools is not accessible on mobile anyway.
 
    The overlay is a fake terminal popup injected into <body>;
    it disappears automatically once DevTools is closed.
    ============================================================ */
 (function () {
-    var caught    = false;  /* true while the overlay is visible */
-    var threshold = 160;    /* px difference that signals a docked panel */
+
+    /* ----------------------------------------------------------
+       Mobile guard — exit immediately on touch devices.
+       The window size heuristic is unreliable on mobile because
+       the browser's own UI (address bar, etc.) creates a large
+       outerHeight vs innerHeight gap that mimics a DevTools panel.
+       ---------------------------------------------------------- */
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
+
+    var caught    = false;  /* true while the overlay is visible      */
+    var threshold = 160;    /* extra px that signals a new docked panel */
+
+    /* ----------------------------------------------------------
+       Baseline capture — snapshot the browser chrome sizes at
+       load time (menu bar, bookmarks bar, OS chrome, etc.).
+       Only INCREASES beyond this baseline trigger detection, so
+       Firefox and Safari with tall toolbars behave correctly.
+       ---------------------------------------------------------- */
+    var baseWidthDiff  = window.outerWidth  - window.innerWidth;
+    var baseHeightDiff = window.outerHeight - window.innerHeight;
 
     /* ----------------------------------------------------------
        busted() — builds and injects the terminal overlay.
        Guards:
-         caught    → prevents duplicate overlays.
+         caught     → prevents duplicate overlays.
          loaderDone → ensures the loader has fully exited first.
        ---------------------------------------------------------- */
     function busted() {
@@ -255,31 +280,34 @@ document.addEventListener('dragstart',   function (e) { e.preventDefault(); });
 
     /* ----------------------------------------------------------
        Strategy A — window size polling (docked DevTools)
-       Runs every 500 ms. Shows overlay when a panel is detected,
-       removes it automatically when the panel is closed.
-       Skips entirely while loaderDone is false.
+       Compares current diff against the captured baseline so that
+       pre-existing browser chrome is never counted as DevTools.
+       Runs every 500 ms, skips while the loader is still visible,
+       and removes the overlay automatically when DevTools closes.
        ---------------------------------------------------------- */
     setInterval(function () {
         if (!loaderDone) return;
 
-        var open = window.outerWidth  - window.innerWidth  > threshold ||
-                   window.outerHeight - window.innerHeight > threshold;
+        var open = (window.outerWidth  - window.innerWidth  - baseWidthDiff)  > threshold ||
+                   (window.outerHeight - window.innerHeight - baseHeightDiff) > threshold;
 
         if (open && !caught) {
             busted();                                               /* DevTools just opened */
         } else if (!open && caught) {
             var el = document.getElementById('devtools-overlay');
-            if (el) el.remove();                                   /* DevTools just closed  */
+            if (el) el.remove();                                   /* DevTools just closed */
             caught = false;
         }
     }, 500);
 
     /* ----------------------------------------------------------
-       Strategy B — console probe (undocked / already-open DevTools)
+       Strategy B — console probe (Chrome only)
        Chrome calls .toString() on the logged object when the
        console panel renders it, exposing that DevTools is open.
+       Complements Strategy A for the undocked-window case where
+       window dimensions do not change.
        ---------------------------------------------------------- */
-    var probe     = /./;
+    var probe      = /./;
     probe.toString = function () { busted(); };
     console.log('%cHi there! 👋', 'color:cornflowerblue;font-size:16px;font-weight:bold;', probe);
 
