@@ -388,3 +388,130 @@
   }
 
   /* End Pop Up Images CSS */
+
+  /* Loader */
+  #loader {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+
+  #loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .loader-ring {
+    width: 56px;
+    height: 56px;
+    border: 5px solid #e9ecef;
+    border-top-color: cornflowerblue;
+    border-radius: 50%;
+    animation: loader-spin 0.75s linear infinite;
+  }
+
+  @keyframes loader-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .loader-brand {
+    margin-top: 1.1rem;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: 0.08rem;
+    color: cornflowerblue;
+    text-transform: uppercase;
+  }
+  /* End Loader */
+
+  /* DevTools Warning Overlay */
+  #devtools-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    z-index: 9999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: dt-fade 0.4s ease;
+  }
+
+  @keyframes dt-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .dt-terminal {
+    max-width: 680px;
+    width: 90%;
+    background: #111;
+    border: 1px solid #00ff41;
+    border-radius: 6px;
+    padding: 2rem;
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+    color: #00ff41;
+    font-family: 'Courier New', monospace;
+  }
+
+  .dt-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    align-items: center;
+  }
+
+  .dt-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .dt-r { background: #ff5f56; }
+  .dt-y { background: #ffbd2e; }
+  .dt-g { background: #27c93f; }
+
+  .dt-lbl {
+    color: #666;
+    font-size: 12px;
+    margin: 0 auto;
+  }
+
+  .dt-ascii {
+    color: #ff4444;
+    font-size: 10px;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    font-family: 'Courier New', monospace;
+    white-space: pre;
+  }
+
+  .dt-line {
+    margin: 0.35rem 0;
+    font-size: 14px;
+    line-height: 1.6;
+    font-family: 'Courier New', monospace;
+  }
+
+  .dt-pr   { color: #888; }
+  .dt-warn { color: #ffcc00; }
+  .dt-ok   { color: #00ff41; }
+
+  .dt-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: #00ff41;
+    animation: dt-blink 1s step-end infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes dt-blink {
+    50% { opacity: 0; }
+  }
+  /* End DevTools Warning Overlay */
