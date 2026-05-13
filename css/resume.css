@@ -333,6 +333,10 @@
       content: 'WORDPRESS'
     }
 
+    .delmia:before {
+      content: 'Delmia Apriso'
+    }
+
     .git:before {
       content: 'GIT'
     }
