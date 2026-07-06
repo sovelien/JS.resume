@@ -3,12 +3,24 @@
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <meta name="viewport" content="width=device-width">
-      <meta name=description content=CV>
-      <meta property="og:image" content="https://joaoalsousa.me/img/JS.jpg">
+      <meta name=description content="An IT individual that takes advantage of the tools and technologies available in the market to grow professionally in a productive way.">
+      <meta name=author content=JSousa>
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="João Sousa">
+      <meta property="og:title" content="João Sousa - IT Individual">
       <meta property="og:description" content="An IT individual that takes advantage of the tools and technologies available in the market to grow professionally in a productive way.">
       <meta property="og:url" content="https://joaoalsousa.me/">
-      <meta property="og:title" content="João Sousa - IT individual">
-      <meta name=author content=JSousa>
+      <meta property="og:image" content="https://joaoalsousa.me/img/JS.jpg">
+      <meta property="og:image:secure_url" content="https://joaoalsousa.me/img/JS.jpg">
+      <meta property="og:image:width" content="749">
+      <meta property="og:image:height" content="814">
+      <meta property="og:image:alt" content="João Sousa - IT Individual">
+      <meta property="og:locale" content="en_US">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="twitter:title" content="João Sousa - IT Individual">
+      <meta name="twitter:description" content="An IT individual that takes advantage of the tools and technologies available in the market to grow professionally in a productive way.">
+      <meta name="twitter:image" content="https://joaoalsousa.me/img/JS.jpg">
+      <meta name="twitter:image:alt" content="João Sousa - IT Individual">
       <title>João Sousa - IT Individual</title>
       <link href="https://cdn.JSdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
       <link href=vendor/bootstrap/css/bootstrap.min.css rel=stylesheet>
@@ -21,13 +33,16 @@
       <link rel="image_src" href="img/thumb.PNG">
    </head>
    <body>
+      <div id="scroll-progress">
+         <div id="scroll-progress-bar"></div>
+      </div>
       <div id="loader">
          <div class="loader-ring"></div>
          <div class="loader-brand">&lt;/J&gt;</div>
       </div>
       <div id=page-top></div>
       <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id=sideNav>
-         <a class="navbar-brand JS-scroll-trigger" href=#page-top>
+         <a class="navbar-brand JS-scroll-trigger" href=#page-top data-cursor-text="home">
          <span class="d-block d-lg-none"></span>
          <span class="d-none d-lg-block">
          <img class="img-fluid img-profile mx-auto mb-2 rounded mx-auto d-block" src=img/john-suited.png alt="">
@@ -490,14 +505,15 @@
          </div>
       </section>
       <div id="phone-fab">
-         <a class="phone-fab-btn" href="tel:+351937372380" aria-label="Call Jo&atilde;o Sousa"><i class="fas fa-phone"></i></a>
+         <a class="phone-fab-btn" href="tel:+351937372380" aria-label="Call Jo&atilde;o Sousa" data-cursor-text="call me"><i class="fas fa-phone"></i></a>
       </div>
       <div id="css-switcher">
-         <button class="bomb"><i class="em em-bulb"></i></button>
+         <button class="bomb" data-cursor-text="toggle dark mode"><i class="em em-bulb"></i></button>
       </div>
       <div id="page-up">
-         <button class="arrow" id="page-top-btn"><i class="em em-top"></i></button>
+         <button class="arrow" id="page-top-btn" data-cursor-text="back to top"><i class="em em-top"></i></button>
       </div>
+      <div id="cursor-hint">On desktop? Hover the icons &amp; buttons — some hide an extra message.</div>
       <script src=vendor/jquery/jquery.min.js></script>
       <script src=vendor/bootstrap/js/bootstrap.bundle.min.js></script>
       <script src="js/index.js"></script>
