@@ -18,98 +18,125 @@ $(document).ready(function () {
 });
 
 /* ============================================================
-   Custom IT Cursor
-   Desktop (pointer: fine): a dot glued to the real pointer plus
-   a lagging "</>" ring that morphs green on interactive elements
-   and spawns tiny binary particles while moving.
-   Touch (coarse pointer): no fake cursor — instead a cornflower
-   ripple pulses at each tap for the same IT-y feedback.
+   Custom Cursor — "terminal caret"
+   Desktop (any-pointer: fine): a blinking text-caret glued to the
+   real pointer, trailed by a small monospace command tag. The tag
+   idles on a bare "❯" prompt and swaps in an element's
+   [data-cursor-text] hint on hover — the cursor itself is the
+   hover-info affordance, not a separate tooltip system.
+   Touch: no fake cursor — a cornflower ripple pulses at each tap.
    ============================================================ */
+var CURSOR_IDLE_PROMPT = '❯';
+
 function initCustomCursor() {
-    var isCoarse = window.matchMedia('(pointer: coarse)').matches ||
-        ('ontouchstart' in window && !window.matchMedia('(pointer: fine)').matches);
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    /* any-pointer (not just the primary pointer) so hybrid touch+mouse
+       laptops still get the fine-pointer cursor when a mouse is present */
+    var hasFinePointer = window.matchMedia('(any-pointer: fine)').matches;
+    var reduceMotion   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (reduceMotion) return;
+    /* Touch ripple runs on any device with a touchscreen, independent of
+       whether a fine pointer is also available */
+    document.addEventListener('touchstart', function (e) {
+        var t = e.touches[0];
+        if (!t) return;
+        spawnTapRipple(t.clientX, t.clientY);
+    }, { passive: true });
 
-    if (isCoarse) {
-        document.addEventListener('touchstart', function (e) {
-            var t = e.touches[0];
-            if (!t) return;
-            spawnTapRipple(t.clientX, t.clientY);
-        }, { passive: true });
-        return;
-    }
+    if (!hasFinePointer) return;
 
     document.body.classList.add('custom-cursor');
 
-    var dot  = document.createElement('div');
-    var ring = document.createElement('div');
-    dot.id  = 'cursor-dot';
-    ring.id = 'cursor-ring';
-    document.body.appendChild(dot);
-    document.body.appendChild(ring);
+    var caret = document.createElement('div');
+    var tag   = document.createElement('div');
+    caret.id = 'cursor-caret';
+    tag.id   = 'cursor-tag';
+    tag.textContent = CURSOR_IDLE_PROMPT;
+    document.body.appendChild(caret);
+    document.body.appendChild(tag);
 
     var mouseX = -100, mouseY = -100;
-    var ringX  = -100, ringY  = -100;
-    var lastBitTime = 0;
+    var tagX   = -100, tagY   = -100;
 
     document.addEventListener('mousemove', function (e) {
         mouseX = e.clientX;
         mouseY = e.clientY;
-        dot.style.transform  = 'translate(-50%, -50%) translate(' + mouseX + 'px,' + mouseY + 'px)';
-        ring.classList.add('visible');
-
-        var now = Date.now();
-        if (now - lastBitTime > 110) {
-            lastBitTime = now;
-            spawnBitParticle(mouseX, mouseY);
-        }
+        caret.style.transform = 'translate(-50%, -50%) translate(' + mouseX + 'px,' + mouseY + 'px)';
+        caret.classList.add('visible');
+        tag.classList.add('visible');
     });
 
     document.addEventListener('mouseleave', function () {
-        ring.classList.remove('visible');
+        caret.classList.remove('visible');
+        tag.classList.remove('visible');
     });
 
     document.addEventListener('mousedown', function () {
-        dot.classList.add('click');
-        ring.classList.add('click');
+        caret.classList.add('click');
+        tag.classList.add('click');
     });
 
     document.addEventListener('mouseup', function () {
-        dot.classList.remove('click');
-        ring.classList.remove('click');
+        caret.classList.remove('click');
+        tag.classList.remove('click');
     });
 
-    /* Ring eases toward the pointer instead of snapping to it */
-    (function trackRing() {
-        ringX += (mouseX - ringX) * 0.18;
-        ringY += (mouseY - ringY) * 0.18;
-        ring.style.transform = 'translate(-50%, -50%) translate(' + ringX + 'px,' + ringY + 'px)';
-        requestAnimationFrame(trackRing);
+    /* Tag eases behind the pointer instead of snapping to it, unless the
+       user prefers reduced motion, in which case it tracks directly */
+    (function trackTag() {
+        var targetX = mouseX + 18;
+        var targetY = mouseY + 22;
+        if (reduceMotion) {
+            tagX = targetX;
+            tagY = targetY;
+        } else {
+            tagX += (targetX - tagX) * 0.2;
+            tagY += (targetY - tagY) * 0.2;
+        }
+        tag.style.transform = 'translate(' + tagX + 'px,' + tagY + 'px)';
+        requestAnimationFrame(trackTag);
     })();
 
     var hoverSelector = 'a, button, .img-pop, .img-pop-hobbies-and-links, input, [role="button"]';
-    document.addEventListener('mouseover', function (e) {
-        if (e.target.closest && e.target.closest(hoverSelector)) {
-            ring.classList.add('hover', 'spin');
-        }
-    });
-    document.addEventListener('mouseout', function (e) {
-        if (e.target.closest && e.target.closest(hoverSelector)) {
-            ring.classList.remove('hover', 'spin');
-        }
-    });
-}
 
-function spawnBitParticle(x, y) {
-    var bit = document.createElement('span');
-    bit.className = 'bit-particle';
-    bit.textContent = Math.random() > 0.5 ? '1' : '0';
-    bit.style.left = (x + (Math.random() * 16 - 8)) + 'px';
-    bit.style.top  = (y + (Math.random() * 16 - 8)) + 'px';
-    document.body.appendChild(bit);
-    setTimeout(function () { bit.remove(); }, 700);
+    /* Discoverability hint — nudges desktop visitors to hover things,
+       then gets out of the way as soon as they find one or after a while */
+    var hint = document.getElementById('cursor-hint');
+    var hintShowTimer, hintHideTimer;
+    if (hint) {
+        hintShowTimer = setTimeout(function () { hint.classList.add('show'); }, 1200);
+        hintHideTimer = setTimeout(dismissHint, 8000);
+    }
+    function dismissHint() {
+        if (!hint) return;
+        clearTimeout(hintShowTimer);
+        clearTimeout(hintHideTimer);
+        hint.classList.remove('show');
+    }
+
+    document.addEventListener('mouseover', function (e) {
+        var infoEl = e.target.closest && e.target.closest('[data-cursor-text]');
+        if (infoEl) {
+            tag.textContent = CURSOR_IDLE_PROMPT + ' ' + infoEl.getAttribute('data-cursor-text');
+            tag.classList.add('active');
+            caret.classList.add('active');
+            dismissHint();
+            return;
+        }
+        if (e.target.closest && e.target.closest(hoverSelector)) {
+            caret.classList.add('hover');
+        }
+    });
+
+    document.addEventListener('mouseout', function (e) {
+        if (e.target.closest && e.target.closest('[data-cursor-text]')) {
+            tag.textContent = CURSOR_IDLE_PROMPT;
+            tag.classList.remove('active');
+            caret.classList.remove('active');
+        }
+        if (e.target.closest && e.target.closest(hoverSelector)) {
+            caret.classList.remove('hover');
+        }
+    });
 }
 
 function spawnTapRipple(x, y) {
@@ -124,14 +151,30 @@ function spawnTapRipple(x, y) {
 /* ============================================================
    Variables
    ============================================================ */
-const btnCssSwitcher = document.querySelector('#css-switcher');
-const pageUpBottom   = document.querySelector('#page-up');
+const btnCssSwitcher   = document.querySelector('#css-switcher');
+const pageUpBottom     = document.querySelector('#page-up');
+const scrollProgressBar = document.getElementById('scroll-progress-bar');
 
 /* ============================================================
    Scroll listener
    Fires scrollFunction() on every scroll event.
    ============================================================ */
 window.onscroll = function () { scrollFunction(); };
+window.addEventListener('resize', updateScrollProgress);
+window.addEventListener('load', updateScrollProgress);
+
+/* ============================================================
+   Scroll Progress Bar
+   Fills a thin bar fixed to the top of the page based on how
+   much of the document has been scrolled (0% at the top,
+   100% at the bottom).
+   ============================================================ */
+function updateScrollProgress() {
+    var scrollTop    = document.documentElement.scrollTop || document.body.scrollTop;
+    var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    var progress     = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    scrollProgressBar.style.width = progress + '%';
+}
 
 /* ============================================================
    Dark Mode — toggle handler
@@ -165,7 +208,8 @@ function invert() {
             -o-filter:      invert(100%);
             -ms-filter:     invert(100%);
         }
-        .img-profile {
+        .img-profile,
+        .img-profile-mobile {
             -webkit-filter: invert(100%);
             -moz-filter:    invert(100%);
             -o-filter:      invert(100%);
@@ -195,7 +239,8 @@ function revert() {
             -o-filter:      invert(0%);
             -ms-filter:     invert(0%);
         }
-        .img-profile {
+        .img-profile,
+        .img-profile-mobile {
             -webkit-filter: invert(0%);
             -moz-filter:    invert(0%);
             -o-filter:      invert(0%);
@@ -223,6 +268,7 @@ function scrollFunction() {
     } else {
         pageUpBottom.style.display = 'none';
     }
+    updateScrollProgress();
 }
 
 /* ============================================================
