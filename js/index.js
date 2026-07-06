@@ -14,7 +14,112 @@ var loaderDone  = false;
    ============================================================ */
 $(document).ready(function () {
     getQuote();
+    initCustomCursor();
 });
+
+/* ============================================================
+   Custom IT Cursor
+   Desktop (pointer: fine): a dot glued to the real pointer plus
+   a lagging "</>" ring that morphs green on interactive elements
+   and spawns tiny binary particles while moving.
+   Touch (coarse pointer): no fake cursor — instead a cornflower
+   ripple pulses at each tap for the same IT-y feedback.
+   ============================================================ */
+function initCustomCursor() {
+    var isCoarse = window.matchMedia('(pointer: coarse)').matches ||
+        ('ontouchstart' in window && !window.matchMedia('(pointer: fine)').matches);
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduceMotion) return;
+
+    if (isCoarse) {
+        document.addEventListener('touchstart', function (e) {
+            var t = e.touches[0];
+            if (!t) return;
+            spawnTapRipple(t.clientX, t.clientY);
+        }, { passive: true });
+        return;
+    }
+
+    document.body.classList.add('custom-cursor');
+
+    var dot  = document.createElement('div');
+    var ring = document.createElement('div');
+    dot.id  = 'cursor-dot';
+    ring.id = 'cursor-ring';
+    document.body.appendChild(dot);
+    document.body.appendChild(ring);
+
+    var mouseX = -100, mouseY = -100;
+    var ringX  = -100, ringY  = -100;
+    var lastBitTime = 0;
+
+    document.addEventListener('mousemove', function (e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.transform  = 'translate(-50%, -50%) translate(' + mouseX + 'px,' + mouseY + 'px)';
+        ring.classList.add('visible');
+
+        var now = Date.now();
+        if (now - lastBitTime > 110) {
+            lastBitTime = now;
+            spawnBitParticle(mouseX, mouseY);
+        }
+    });
+
+    document.addEventListener('mouseleave', function () {
+        ring.classList.remove('visible');
+    });
+
+    document.addEventListener('mousedown', function () {
+        dot.classList.add('click');
+        ring.classList.add('click');
+    });
+
+    document.addEventListener('mouseup', function () {
+        dot.classList.remove('click');
+        ring.classList.remove('click');
+    });
+
+    /* Ring eases toward the pointer instead of snapping to it */
+    (function trackRing() {
+        ringX += (mouseX - ringX) * 0.18;
+        ringY += (mouseY - ringY) * 0.18;
+        ring.style.transform = 'translate(-50%, -50%) translate(' + ringX + 'px,' + ringY + 'px)';
+        requestAnimationFrame(trackRing);
+    })();
+
+    var hoverSelector = 'a, button, .img-pop, .img-pop-hobbies-and-links, input, [role="button"]';
+    document.addEventListener('mouseover', function (e) {
+        if (e.target.closest && e.target.closest(hoverSelector)) {
+            ring.classList.add('hover', 'spin');
+        }
+    });
+    document.addEventListener('mouseout', function (e) {
+        if (e.target.closest && e.target.closest(hoverSelector)) {
+            ring.classList.remove('hover', 'spin');
+        }
+    });
+}
+
+function spawnBitParticle(x, y) {
+    var bit = document.createElement('span');
+    bit.className = 'bit-particle';
+    bit.textContent = Math.random() > 0.5 ? '1' : '0';
+    bit.style.left = (x + (Math.random() * 16 - 8)) + 'px';
+    bit.style.top  = (y + (Math.random() * 16 - 8)) + 'px';
+    document.body.appendChild(bit);
+    setTimeout(function () { bit.remove(); }, 700);
+}
+
+function spawnTapRipple(x, y) {
+    var ripple = document.createElement('div');
+    ripple.className = 'tap-ripple';
+    ripple.style.left = x + 'px';
+    ripple.style.top  = y + 'px';
+    document.body.appendChild(ripple);
+    setTimeout(function () { ripple.remove(); }, 600);
+}
 
 /* ============================================================
    Variables
