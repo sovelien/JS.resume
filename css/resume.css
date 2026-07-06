@@ -100,6 +100,81 @@
     background-color: cornflowerblue !important;
   }
 
+  .img-profile-mobile {
+    width: 2rem;
+    height: 2rem;
+    object-fit: cover;
+    opacity: 0.85;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+  }
+
+  @media (min-width: 992px) {
+    .img-profile-mobile {
+      display: none;
+    }
+  }
+
+  .contact-card {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    max-width: 26rem;
+    padding: 1.5rem 2rem;
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none !important;
+    cursor: pointer;
+  }
+
+  .contact-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.12);
+  }
+
+  .contact-card:hover .contact-card-number {
+    color: #0C3667;
+  }
+
+  .contact-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background-color: cornflowerblue;
+    color: #fff;
+    font-size: 1.4rem;
+  }
+
+  .contact-card-name {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 1rem;
+    color: #343a40;
+    letter-spacing: 0.05rem;
+  }
+
+  .contact-card-number {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: cornflowerblue;
+    text-decoration: none;
+    word-break: break-word;
+  }
+
+  @media (max-width: 400px) {
+    .contact-card {
+      flex-direction: column;
+      text-align: center;
+      padding: 1.5rem;
+    }
+  }
+
   @media (min-width: 992px) {
     #sideNav {
       text-align: center;
@@ -224,6 +299,47 @@
   }
 
   /* END Bomb and Page Up Button CSS*/
+
+  /* BEGINNING Phone FAB Button CSS */
+  #phone-fab {
+    position: fixed;
+    bottom: 54px;
+    right: 10px;
+    z-index: 1030;
+  }
+
+  .phone-fab-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background-color: cornflowerblue;
+    color: #fff !important;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    text-decoration: none !important;
+    animation: phone-fab-pulse 2s infinite;
+  }
+
+  .phone-fab-btn:hover {
+    background-color: #0C3667;
+    color: #fff !important;
+  }
+
+  @keyframes phone-fab-pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(100, 149, 237, 0.6);
+    }
+    70% {
+      box-shadow: 0 0 0 12px rgba(100, 149, 237, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(100, 149, 237, 0);
+    }
+  }
+
+  /* END Phone FAB Button CSS */
 
   /* Pop Up Images CSS Begining */
 
@@ -527,3 +643,156 @@
     50% { opacity: 0; }
   }
   /* End DevTools Warning Overlay */
+
+  /* ============================================================
+     Custom IT Cursor (desktop, pointer: fine only)
+     ============================================================ */
+  @media (pointer: fine) {
+    body.custom-cursor,
+    body.custom-cursor * {
+      cursor: none !important;
+    }
+
+    #cursor-dot,
+    #cursor-ring {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 999999;
+      transform: translate(-50%, -50%);
+      will-change: transform;
+    }
+
+    #cursor-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: cornflowerblue;
+      box-shadow: 0 0 6px cornflowerblue;
+    }
+
+    #cursor-ring {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid cornflowerblue;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: cornflowerblue;
+      opacity: 0;
+      transition: opacity 0.15s ease, width 0.2s ease, height 0.2s ease,
+        border-radius 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    #cursor-ring::before {
+      content: '';
+      opacity: 0;
+    }
+
+    #cursor-ring.visible {
+      opacity: 1;
+    }
+
+    #cursor-ring.spin {
+      border-radius: 50%;
+      border: 1.5px dashed cornflowerblue;
+      animation: cursor-spin 3s linear infinite;
+    }
+
+    #cursor-ring.hover {
+      width: 46px;
+      height: 46px;
+      border-color: #00ff41;
+      color: #00ff41;
+      background: rgba(0, 255, 65, 0.08);
+    }
+
+    #cursor-ring.hover::before {
+      content: '</>';
+      opacity: 1;
+    }
+
+    #cursor-ring.click {
+      border-color: #00ff41;
+      box-shadow: 0 0 14px rgba(0, 255, 65, 0.6);
+    }
+
+    body.custom-cursor #cursor-dot.click {
+      background: #00ff41;
+      box-shadow: 0 0 10px #00ff41;
+    }
+
+    @keyframes cursor-spin {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .bit-particle {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 999998;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: cornflowerblue;
+      transform: translate(-50%, -50%);
+      animation: bit-float 0.7s ease-out forwards;
+    }
+
+    @keyframes bit-float {
+      0% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateY(-24px);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body.custom-cursor * {
+      cursor: auto !important;
+    }
+    #cursor-dot,
+    #cursor-ring {
+      display: none !important;
+    }
+  }
+  /* End Custom IT Cursor */
+
+  /* ============================================================
+     Touch Tap Ripple (mobile / coarse pointer IT-themed feedback)
+     ============================================================ */
+  .tap-ripple {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 36px;
+    height: 36px;
+    margin: -18px 0 0 -18px;
+    border-radius: 50%;
+    border: 2px solid cornflowerblue;
+    pointer-events: none;
+    z-index: 999999;
+    animation: tap-ripple-anim 0.55s ease-out forwards;
+  }
+
+  @keyframes tap-ripple-anim {
+    0% {
+      opacity: 0.9;
+      transform: scale(0.3);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.8);
+    }
+  }
+  /* End Touch Tap Ripple */
