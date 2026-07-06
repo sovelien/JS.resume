@@ -90,6 +90,32 @@
     font-size: 20px;
     letter-spacing: 0.05rem;
     text-transform: uppercase;
+    position: relative;
+  }
+
+  #topNav .navbar-nav .nav-item .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 0.35rem;
+    height: 2px;
+    background-color: #fff;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  #topNav .navbar-nav .nav-item .nav-link:hover::after,
+  #topNav .navbar-nav .nav-item .nav-link.active::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #topNav .navbar-nav .nav-item .nav-link::after {
+      transition: transform 0.2s linear;
+    }
   }
 
   a.navbar-brand {
