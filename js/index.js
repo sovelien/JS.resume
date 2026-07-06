@@ -83,7 +83,9 @@ function initCustomCursor() {
     /* Tag eases behind the pointer instead of snapping to it, unless the
        user prefers reduced motion, in which case it tracks directly */
     (function trackTag() {
-        var targetX = mouseX + 18;
+        var tagWidth = tag.offsetWidth || 0;
+        var nearRightEdge = mouseX + 18 + tagWidth > window.innerWidth - 10;
+        var targetX = nearRightEdge ? mouseX - tagWidth - 18 : mouseX + 18;
         var targetY = mouseY + 22;
         if (reduceMotion) {
             tagX = targetX;
@@ -97,6 +99,16 @@ function initCustomCursor() {
     })();
 
     var hoverSelector = 'a, button, .img-pop, .img-pop-hobbies-and-links, input, [role="button"]';
+    var popSelector   = '.img-pop, .img-pop-hobbies-and-links';
+
+    /* Tool-icon popups still carry their message in a CSS ::before
+       (content: '...'), so lift that same string into the cursor tag
+       instead of duplicating it in markup as a data-cursor-text attr */
+    function getPopText(el) {
+        var content = window.getComputedStyle(el, '::before').content;
+        if (!content || content === 'none' || content === 'normal') return null;
+        return content.replace(/^["']|["']$/g, '');
+    }
 
     /* Discoverability hint — nudges desktop visitors to hover things,
        then gets out of the way as soon as they find one or after a while */
@@ -122,13 +134,24 @@ function initCustomCursor() {
             dismissHint();
             return;
         }
+        var popEl = e.target.closest && e.target.closest(popSelector);
+        if (popEl) {
+            var text = getPopText(popEl);
+            if (text) {
+                tag.textContent = CURSOR_IDLE_PROMPT + ' ' + text;
+                tag.classList.add('active');
+                caret.classList.add('active', 'hover');
+                dismissHint();
+                return;
+            }
+        }
         if (e.target.closest && e.target.closest(hoverSelector)) {
             caret.classList.add('hover');
         }
     });
 
     document.addEventListener('mouseout', function (e) {
-        if (e.target.closest && e.target.closest('[data-cursor-text]')) {
+        if (e.target.closest && (e.target.closest('[data-cursor-text]') || e.target.closest(popSelector))) {
             tag.textContent = CURSOR_IDLE_PROMPT;
             tag.classList.remove('active');
             caret.classList.remove('active');
