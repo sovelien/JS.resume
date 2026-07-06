@@ -645,128 +645,107 @@
   /* End DevTools Warning Overlay */
 
   /* ============================================================
-     Custom IT Cursor (desktop, pointer: fine only)
+     Custom Cursor — "terminal caret" (desktop, any-pointer: fine)
+     A blinking text-caret glued to the real pointer, trailed by a
+     small monospace command tag. Idle it shows a bare "❯" prompt;
+     hovering anything tagged [data-cursor-text] swaps in that
+     element's hint (e.g. "❯ call now") — the cursor doubles as the
+     hover-info affordance instead of a bank of separate tooltips.
      ============================================================ */
-  @media (pointer: fine) {
+  @media (any-pointer: fine) {
     body.custom-cursor,
     body.custom-cursor * {
       cursor: none !important;
     }
 
-    #cursor-dot,
-    #cursor-ring {
+    #cursor-caret {
       position: fixed;
       top: 0;
       left: 0;
+      width: 2px;
+      height: 16px;
+      background: cornflowerblue;
       pointer-events: none;
       z-index: 999999;
-      transform: translate(-50%, -50%);
+      visibility: hidden;
       will-change: transform;
+      animation: caret-blink 1s step-end infinite;
+      transition: width 0.15s ease, height 0.15s ease, background 0.15s ease,
+        box-shadow 0.15s ease, border-radius 0.15s ease;
     }
 
-    #cursor-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: cornflowerblue;
-      box-shadow: 0 0 6px cornflowerblue;
+    #cursor-caret.visible {
+      visibility: visible;
     }
 
-    #cursor-ring {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1.5px solid cornflowerblue;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Courier New', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      color: cornflowerblue;
-      opacity: 0;
-      transition: opacity 0.15s ease, width 0.2s ease, height 0.2s ease,
-        border-radius 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-    }
-
-    #cursor-ring::before {
-      content: '';
-      opacity: 0;
-    }
-
-    #cursor-ring.visible {
-      opacity: 1;
-    }
-
-    #cursor-ring.spin {
-      border-radius: 50%;
-      border: 1.5px dashed cornflowerblue;
-      animation: cursor-spin 3s linear infinite;
-    }
-
-    #cursor-ring.hover {
-      width: 46px;
-      height: 46px;
-      border-color: #00ff41;
-      color: #00ff41;
-      background: rgba(0, 255, 65, 0.08);
-    }
-
-    #cursor-ring.hover::before {
-      content: '</>';
-      opacity: 1;
-    }
-
-    #cursor-ring.click {
-      border-color: #00ff41;
-      box-shadow: 0 0 14px rgba(0, 255, 65, 0.6);
-    }
-
-    body.custom-cursor #cursor-dot.click {
+    #cursor-caret.hover {
       background: #00ff41;
-      box-shadow: 0 0 10px #00ff41;
     }
 
-    @keyframes cursor-spin {
-      to { transform: translate(-50%, -50%) rotate(360deg); }
+    #cursor-caret.active {
+      width: 10px;
+      border-radius: 2px;
+      background: cornflowerblue;
+      box-shadow: 0 0 10px rgba(100, 149, 237, 0.7);
     }
 
-    .bit-particle {
+    #cursor-caret.click {
+      background: #00ff41;
+      box-shadow: 0 0 12px rgba(0, 255, 65, 0.7);
+    }
+
+    @keyframes caret-blink {
+      50% { opacity: 0; }
+    }
+
+    #cursor-tag {
       position: fixed;
       top: 0;
       left: 0;
+      display: flex;
+      align-items: center;
       pointer-events: none;
-      z-index: 999998;
+      z-index: 999999;
+      padding: 3px 8px;
       font-family: 'Courier New', monospace;
       font-size: 11px;
       font-weight: 700;
+      white-space: nowrap;
       color: cornflowerblue;
-      transform: translate(-50%, -50%);
-      animation: bit-float 0.7s ease-out forwards;
+      background: rgba(17, 17, 17, 0.88);
+      border: 1px solid rgba(100, 149, 237, 0.45);
+      border-radius: 4px;
+      opacity: 0;
+      will-change: transform;
+      transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+        background 0.15s ease;
     }
 
-    @keyframes bit-float {
-      0% {
-        opacity: 0.9;
-        transform: translate(-50%, -50%) translateY(0);
-      }
-      100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) translateY(-24px);
-      }
+    #cursor-tag.visible {
+      opacity: 0.55;
+    }
+
+    #cursor-tag.active {
+      opacity: 1;
+      color: #00ff41;
+      border-color: #00ff41;
+      background: rgba(0, 20, 8, 0.9);
+    }
+
+    #cursor-tag.click {
+      color: #00ff41;
+      border-color: #00ff41;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    body.custom-cursor * {
-      cursor: auto !important;
-    }
-    #cursor-dot,
-    #cursor-ring {
-      display: none !important;
+    /* Caret keeps tracking the pointer 1:1 — only the blink loop stops */
+    #cursor-caret {
+      animation: none;
+      opacity: 1;
     }
   }
-  /* End Custom IT Cursor */
+  /* End Custom Cursor */
 
   /* ============================================================
      Touch Tap Ripple (mobile / coarse pointer IT-themed feedback)
@@ -796,3 +775,80 @@
     }
   }
   /* End Touch Tap Ripple */
+
+  /* ============================================================
+     Cursor Hint — discoverability caption
+     Tells desktop/fine-pointer visitors that hovering reveals
+     hidden info in the cursor tag. Fades in shortly after load,
+     fades out on its own or the moment the visitor actually
+     hovers a hinted element.
+     ============================================================ */
+  #cursor-hint {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translate(-50%, 8px);
+    z-index: 1035;
+    max-width: 90vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: cornflowerblue;
+    background: rgba(17, 17, 17, 0.88);
+    border: 1px solid rgba(100, 149, 237, 0.4);
+    border-radius: 20px;
+    padding: 6px 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  #cursor-hint.show {
+    opacity: 0.85;
+    transform: translate(-50%, 0);
+  }
+
+  @media (max-width: 767px) {
+    #cursor-hint {
+      display: none;
+    }
+  }
+  /* End Cursor Hint */
+
+  /* ============================================================
+     Scroll Progress Bar
+     ============================================================ */
+  #scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: transparent;
+    z-index: 1040;
+    pointer-events: none;
+  }
+
+  #scroll-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, cornflowerblue, #0C3667);
+    box-shadow: 0 0 6px rgba(100, 149, 237, 0.6);
+    transition: width 0.1s linear;
+  }
+
+  @media (max-width: 767px) {
+    #scroll-progress {
+      height: 2px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #scroll-progress-bar {
+      transition: none;
+    }
+  }
+  /* End Scroll Progress Bar */
