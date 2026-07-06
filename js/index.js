@@ -15,7 +15,44 @@ var loaderDone  = false;
 $(document).ready(function () {
     getQuote();
     initCustomCursor();
+    initScrollSpy();
 });
+
+/* ============================================================
+   Scroll Spy — active nav underline
+   Watches each section referenced by a #topNav link and marks
+   the matching link "active" once its section crosses the
+   middle band of the viewport (IntersectionObserver rootMargin
+   shrinks the trigger area to a thin strip around center), so
+   the animated underline (see resume.css) tracks whichever
+   section is currently in view.
+   ============================================================ */
+function initScrollSpy() {
+    var navLinks = document.querySelectorAll('#topNav .nav-link.JS-scroll-trigger');
+    if (!navLinks.length || !('IntersectionObserver' in window)) return;
+
+    var linkByHash = {};
+    var sections = [];
+    navLinks.forEach(function (link) {
+        var hash = link.getAttribute('href');
+        var section = hash && document.querySelector(hash);
+        if (section) {
+            linkByHash[hash] = link;
+            sections.push(section);
+        }
+    });
+    if (!sections.length) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            navLinks.forEach(function (l) { l.classList.remove('active'); });
+            linkByHash['#' + entry.target.id].classList.add('active');
+        });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+
+    sections.forEach(function (s) { observer.observe(s); });
+}
 
 /* ============================================================
    Custom Cursor — "terminal caret"
