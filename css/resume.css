@@ -359,17 +359,17 @@
     left: 50px;
     bottom: 25px;
     font-size: 12.5px;
-    font-family: 'Asap Condensed';
-    color: black;
-    background: #ffffff;
+    font-family: 'Courier New', monospace;
+    color: #00ff41;
+    background: #111;
     transition: all .4s ease-out;
     transform: translateY(-15px);
     opacity: 0;
     z-index: 1;
     border-radius: 5px;
     font-weight: normal;
-    border: .2em solid cornflowerblue;
-    box-shadow: 8px 7px 5px 0px rgba(0, 0, 0, .5);
+    border: 1px solid #00ff41;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
   }
 
   .img-pop:hover:before {
@@ -382,21 +382,29 @@
     left: 50px;
     bottom: 25px;
     font-size: 12.5px;
-    font-family: 'Asap Condensed';
-    color: black;
-    background: #ffffff;
+    font-family: 'Courier New', monospace;
+    color: #00ff41;
+    background: #111;
     transition: all .4s ease-out;
     transform: translateY(-15px);
     opacity: 0;
     z-index: 1;
     border-radius: 5px;
     font-weight: normal;
-    border: .2em solid cornflowerblue;
-    box-shadow: 8px 7px 5px 0px rgba(0, 0, 0, .5);
+    border: 1px solid #00ff41;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
   }
   .img-pop-hobbies-and-links:hover:before {
     bottom: 15px;
     opacity: 100;
+  }
+
+  /* Desktop: message rides the terminal cursor tag instead (see
+     initCustomCursor in js/index.js) — keep the static box only as a
+     touch/coarse-pointer fallback where the custom cursor is disabled */
+  body.custom-cursor .img-pop:hover:before,
+  body.custom-cursor .img-pop-hobbies-and-links:hover:before {
+    opacity: 0;
   }
 
   @media screen and (min-width: 1000px) {
