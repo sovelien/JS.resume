@@ -425,14 +425,6 @@
     opacity: 100;
   }
 
-  /* Desktop: message rides the terminal cursor tag instead (see
-     initCustomCursor in js/index.js) — keep the static box only as a
-     touch/coarse-pointer fallback where the custom cursor is disabled */
-  body.custom-cursor .img-pop:hover:before,
-  body.custom-cursor .img-pop-hobbies-and-links:hover:before {
-    opacity: 0;
-  }
-
   @media screen and (min-width: 1000px) {
     .linkedin:before {
       content: 'Checkout my LinkedIn.'
@@ -679,145 +671,12 @@
   /* End DevTools Warning Overlay */
 
   /* ============================================================
-     Custom Cursor — "terminal caret" (desktop, any-pointer: fine)
-     A blinking text-caret glued to the real pointer, trailed by a
-     small monospace command tag. Idle it shows a bare "❯" prompt;
-     hovering anything tagged [data-cursor-text] swaps in that
-     element's hint (e.g. "❯ call now") — the cursor doubles as the
-     hover-info affordance instead of a bank of separate tooltips.
+     Hover Hint — discoverability caption
+     Nudges visitors that some icons/buttons reveal an extra
+     message on hover. Fades in shortly after load, fades out on
+     its own or the moment the visitor hovers a hinted element.
      ============================================================ */
-  @media (any-pointer: fine) {
-    body.custom-cursor,
-    body.custom-cursor * {
-      cursor: none !important;
-    }
-
-    #cursor-caret {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 2px;
-      height: 16px;
-      background: cornflowerblue;
-      pointer-events: none;
-      z-index: 999999;
-      visibility: hidden;
-      will-change: transform;
-      animation: caret-blink 1s step-end infinite;
-      transition: width 0.15s ease, height 0.15s ease, background 0.15s ease,
-        box-shadow 0.15s ease, border-radius 0.15s ease;
-    }
-
-    #cursor-caret.visible {
-      visibility: visible;
-    }
-
-    #cursor-caret.hover {
-      background: #00ff41;
-    }
-
-    #cursor-caret.active {
-      width: 10px;
-      border-radius: 2px;
-      background: cornflowerblue;
-      box-shadow: 0 0 10px rgba(100, 149, 237, 0.7);
-    }
-
-    #cursor-caret.click {
-      background: #00ff41;
-      box-shadow: 0 0 12px rgba(0, 255, 65, 0.7);
-    }
-
-    @keyframes caret-blink {
-      50% { opacity: 0; }
-    }
-
-    #cursor-tag {
-      position: fixed;
-      top: 0;
-      left: 0;
-      display: flex;
-      align-items: center;
-      pointer-events: none;
-      z-index: 999999;
-      padding: 3px 8px;
-      font-family: 'Courier New', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-      color: cornflowerblue;
-      background: rgba(17, 17, 17, 0.88);
-      border: 1px solid rgba(100, 149, 237, 0.45);
-      border-radius: 4px;
-      opacity: 0;
-      will-change: transform;
-      transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease,
-        background 0.15s ease;
-    }
-
-    #cursor-tag.visible {
-      opacity: 0.55;
-    }
-
-    #cursor-tag.active {
-      opacity: 1;
-      color: #00ff41;
-      border-color: #00ff41;
-      background: rgba(0, 20, 8, 0.9);
-    }
-
-    #cursor-tag.click {
-      color: #00ff41;
-      border-color: #00ff41;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    /* Caret keeps tracking the pointer 1:1 — only the blink loop stops */
-    #cursor-caret {
-      animation: none;
-      opacity: 1;
-    }
-  }
-  /* End Custom Cursor */
-
-  /* ============================================================
-     Touch Tap Ripple (mobile / coarse pointer IT-themed feedback)
-     ============================================================ */
-  .tap-ripple {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 36px;
-    height: 36px;
-    margin: -18px 0 0 -18px;
-    border-radius: 50%;
-    border: 2px solid cornflowerblue;
-    pointer-events: none;
-    z-index: 999999;
-    animation: tap-ripple-anim 0.55s ease-out forwards;
-  }
-
-  @keyframes tap-ripple-anim {
-    0% {
-      opacity: 0.9;
-      transform: scale(0.3);
-    }
-    100% {
-      opacity: 0;
-      transform: scale(1.8);
-    }
-  }
-  /* End Touch Tap Ripple */
-
-  /* ============================================================
-     Cursor Hint — discoverability caption
-     Tells desktop/fine-pointer visitors that hovering reveals
-     hidden info in the cursor tag. Fades in shortly after load,
-     fades out on its own or the moment the visitor actually
-     hovers a hinted element.
-     ============================================================ */
-  #cursor-hint {
+  #hover-hint {
     position: fixed;
     bottom: 14px;
     left: 50%;
@@ -840,17 +699,17 @@
     transition: opacity 0.5s ease, transform 0.5s ease;
   }
 
-  #cursor-hint.show {
+  #hover-hint.show {
     opacity: 0.85;
     transform: translate(-50%, 0);
   }
 
   @media (max-width: 767px) {
-    #cursor-hint {
+    #hover-hint {
       display: none;
     }
   }
-  /* End Cursor Hint */
+  /* End Hover Hint */
 
   /* ============================================================
      Scroll Progress Bar
