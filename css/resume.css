@@ -436,7 +436,7 @@
 
     .cv:before {
       margin-top: 5px !important;
-      content: 'Download my resume (pdf).'
+      content: 'View or download my resume.'
     }
 
     .csharp:before {
@@ -745,3 +745,156 @@
     }
   }
   /* End Scroll Progress Bar */
+
+  /* ============================================================
+     Experience & Education Timeline
+     Each .resume-item carries its own dot (::before) and its own
+     rail segment (::after). The segment runs from under the dot
+     down past the mb-5 gap so it meets the next dot, and is
+     dropped on the last item so no stub hangs below the timeline.
+     Dot and rail are centred on the same axis:
+       item  dot 16px at left 0  -> centre 8px | rail at left 7px
+       role  dot 12px at left 0  -> centre 6px | rail at left 5px
+     Both pseudo elements are positioned against their own element
+     (never the list), which keeps those two numbers comparable.
+     ============================================================ */
+  .resume-timeline .resume-item {
+    position: relative;
+    padding-left: 2.25rem;
+  }
+
+  .resume-timeline .resume-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    width: 16px;
+    height: 16px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid cornflowerblue;
+    z-index: 1;
+  }
+
+  .resume-timeline .resume-item::after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 1.4rem;
+    bottom: -3.25rem; /* bridges the mb-5 gap to the next dot */
+    width: 2px;
+    background: #dfe6f1;
+  }
+
+  .resume-timeline .resume-item:last-child::after {
+    display: none;
+  }
+
+  .resume-content h3 a {
+    color: #343a40;
+  }
+
+  /* Nested roles inside a single company */
+  .role-list {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+  }
+
+  .role {
+    position: relative;
+    padding-left: 1.75rem;
+  }
+
+  .role + .role {
+    margin-top: 1.75rem;
+  }
+
+  .role::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    width: 12px;
+    height: 12px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #9db6e6;
+    z-index: 1;
+  }
+
+  .role::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 1.15rem;
+    bottom: -1.75rem;
+    width: 2px;
+    background: #dfe6f1;
+  }
+
+  .role:last-child::after {
+    display: none;
+  }
+
+  .role.is-current::before {
+    background: cornflowerblue;
+    border-color: cornflowerblue;
+  }
+
+  .role p {
+    margin: 0.35rem 0 0;
+  }
+
+  .role-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.02rem;
+    text-transform: uppercase;
+    color: #343a40;
+  }
+
+  .role-date {
+    margin-left: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: cornflowerblue;
+  }
+
+  .role-badge {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.06rem;
+    text-transform: uppercase;
+    color: #fff;
+    background: cornflowerblue;
+    border-radius: 3px;
+    vertical-align: middle;
+  }
+
+  /* Stack chips */
+  .tag-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.6rem 0 0;
+    padding: 0;
+  }
+
+  .tag-list li {
+    padding: 0.2rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.03rem;
+    text-transform: uppercase;
+    color: #5b6b82;
+    background: #eef2f8;
+    border-radius: 999px;
+  }
+  /* End Experience & Education Timeline */
