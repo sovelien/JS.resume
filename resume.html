@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta name="description" content="João Sousa's resume - Incident Manager with a support and development background.">
+   <meta name="robots" content="noindex">
+   <title>João Sousa | Resume</title>
+   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+   <link href="css/resume.css" rel="stylesheet">
+   <link href='https://fonts.googleapis.com/css?family=Asap%20Condensed' rel='stylesheet'>
+   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+   <link rel="icon" href="favicon.ico" type="image/x-icon">
+   <style>
+      html, body {
+         height: 100%;
+         width: 100%;
+         padding-top: 0 !important;
+         padding-left: 0 !important;
+         overflow: hidden;
+      }
+      .resume-bar { flex-wrap: nowrap; width: 100%; box-sizing: border-box; }
+      .resume-bar {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         height: 56px;
+         padding: 0 1.25rem;
+         background: cornflowerblue;
+         color: #fff;
+      }
+      .resume-bar-brand {
+         display: flex;
+         align-items: center;
+         gap: 0.6rem;
+         color: #fff !important;
+         font-weight: 800;
+         letter-spacing: 0.05em;
+         text-decoration: none !important;
+         font-size: 1.05rem;
+         text-transform: uppercase;
+      }
+      .resume-bar-brand .mark {
+         font-family: 'Courier New', monospace;
+         font-weight: 800;
+      }
+      .resume-bar-actions {
+         display: flex;
+         align-items: center;
+         gap: 0.6rem;
+      }
+      .resume-btn {
+         display: inline-flex;
+         align-items: center;
+         gap: 0.5rem;
+         padding: 0.5rem 1.1rem;
+         border-radius: 999px;
+         font-weight: 700;
+         font-size: 0.85rem;
+         letter-spacing: 0.03em;
+         text-transform: uppercase;
+         text-decoration: none !important;
+         transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .resume-btn:hover { transform: translateY(-1px); }
+      .resume-btn-solid {
+         background: #fff;
+         color: #0C3667 !important;
+      }
+      .resume-btn-solid:hover { color: #0C3667 !important; box-shadow: 0 0.35rem 1rem rgba(0,0,0,0.18); }
+      .resume-btn-ghost {
+         background: rgba(255,255,255,0.16);
+         color: #fff !important;
+         border: 1px solid rgba(255,255,255,0.5);
+      }
+      .resume-btn-ghost:hover { background: rgba(255,255,255,0.28); color: #fff !important; }
+
+      .resume-viewer {
+         width: 100%;
+         height: calc(100% - 56px);
+         border: none;
+         display: block;
+      }
+
+      .resume-fallback {
+         display: none;
+         height: calc(100% - 56px);
+         align-items: center;
+         justify-content: center;
+         text-align: center;
+         padding: 2rem;
+         box-sizing: border-box;
+      }
+      .resume-fallback > div {
+         width: 100%;
+         max-width: 420px;
+         margin: 0 auto;
+      }
+      .resume-fallback .icon {
+         font-size: 3.5rem;
+         color: cornflowerblue;
+         margin-bottom: 1rem;
+      }
+      .resume-fallback h1 {
+         font-size: 1.6rem;
+         margin-bottom: 0.5rem;
+         color: #343a40;
+      }
+      .resume-fallback p {
+         color: #868e96;
+         margin-bottom: 1.5rem;
+      }
+      .resume-fallback .resume-btn-solid {
+         background: cornflowerblue;
+         color: #fff !important;
+      }
+      .resume-fallback .resume-btn-solid:hover { color: #fff !important; }
+      .resume-fallback-actions {
+         display: flex;
+         gap: 0.75rem;
+         justify-content: center;
+         flex-wrap: wrap;
+      }
+
+      @media (max-width: 767px) {
+         .resume-viewer { display: none; }
+         .resume-fallback { display: flex; }
+         .resume-bar-brand span.label { display: none; }
+         .resume-bar { padding: 0 0.85rem; }
+         .resume-bar-actions { gap: 0.4rem; }
+         .resume-bar-actions .resume-btn-ghost { display: none; }
+         .resume-bar .resume-btn { padding: 0.45rem 0.85rem; font-size: 0.75rem; }
+         .resume-fallback { padding: 1.5rem 1rem; }
+         .resume-fallback h1 { font-size: 1.3rem; }
+         .resume-fallback-actions { gap: 0.5rem; }
+         .resume-fallback-actions .resume-btn { font-size: 0.78rem; padding: 0.5rem 0.9rem; }
+      }
+   </style>
+</head>
+<body>
+   <div class="resume-bar">
+      <a class="resume-bar-brand" href="index.html#page-top">
+         <span class="mark">&lt;/J&gt;</span>
+         <span class="label">João Sousa</span>
+      </a>
+      <div class="resume-bar-actions">
+         <a class="resume-btn resume-btn-ghost" href="files/JoaoSousa_Resume.pdf" target="_blank" rel="noopener">
+            <i class="fas fa-external-link-alt"></i> Open in new tab
+         </a>
+         <a class="resume-btn resume-btn-solid" href="files/JoaoSousa_Resume.pdf" download="JoaoSousa_Resume">
+            <i class="fas fa-arrow-down"></i> Download
+         </a>
+      </div>
+   </div>
+
+   <iframe class="resume-viewer" src="files/JoaoSousa_Resume.pdf#toolbar=1&navpanes=0" title="João Sousa Resume"></iframe>
+
+   <div class="resume-fallback">
+      <div>
+         <div class="icon"><i class="fas fa-file-pdf"></i></div>
+         <h1>Resume preview isn't available on this device</h1>
+         <p>Download the PDF or open it in your browser instead.</p>
+         <div class="resume-fallback-actions">
+            <a class="resume-btn resume-btn-solid" href="files/JoaoSousa_Resume.pdf" download="JoaoSousa_Resume">
+               <i class="fas fa-arrow-down"></i> Download
+            </a>
+            <a class="resume-btn resume-btn-ghost" style="background:#eef2f8;color:#343a40 !important;border-color:#dfe6f1;" href="files/JoaoSousa_Resume.pdf" target="_blank" rel="noopener">
+               <i class="fas fa-external-link-alt"></i> Open in new tab
+            </a>
+         </div>
+      </div>
+   </div>
+</body>
+</html>
